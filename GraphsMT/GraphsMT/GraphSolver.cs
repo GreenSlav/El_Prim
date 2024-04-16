@@ -15,6 +15,7 @@ public class GraphSolver
         }
         
         _matrix = matrix;
+        _resultMatrix = new int[matrix.GetLength(0),matrix.GetLength(1)];
     }
 
     public GraphSolver(int[][]? arrayOfArrays)
@@ -44,9 +45,75 @@ public class GraphSolver
         throw new Exception("Both sources are null!");
     }
 
+    
+    // !!!
+    // протестировать бы надо метод
     private void Solve(int[,] matrix)
     {
+        // заметка: на самом деле как будто бы в качестве первого элемента можно взять любую вершину
+        // все равно же рано или поздно до нее доберемся
+        HashSet<int> pickedVertexes = new HashSet<int>() {0};
+        //bool firstVertexIsPicked = false;
+        int minAvailablePathlength = int.MaxValue;
+        int fromVertex = 0;
+        int toVertex = 0;
         
+        // находим самый первый кратчайший путь из нулевой вершины
+        for (int i = 1; i < matrix.GetLength(0); i++)
+        {
+            if (matrix[0, i] != 0 && matrix[0, i] < minAvailablePathlength)
+            {
+                minAvailablePathlength = matrix[0, i];
+                toVertex = i;
+            }
+        }
+
+        _resultMatrix[0, toVertex] = minAvailablePathlength;
+        _resultMatrix[toVertex, 0] = minAvailablePathlength;
+        pickedVertexes.Add(toVertex);
+        toVertex = 0;
+        minAvailablePathlength = int.MaxValue;
+        
+        //bool minAvailablePathlengthIsPicked = false; // true будет означать, что мы дейстивтельно выбрали это значение
+        // это сделано с целью проверки в графе реально был путь int.MaxValue или нет
+        // с другой стороны по сути мы на каждом этапе будем выбирать по одному значению
+        // не может быть ситуции, что за один обход мы по итогу так ничего и не включим в список вершин
+        
+        while (pickedVertexes.Count != matrix.GetLength(0))
+        {
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    if (i == j || _resultMatrix[i, j] != 0 || pickedVertexes.Contains(j))
+                        continue;
+
+                    if (matrix[i, j] < minAvailablePathlength && pickedVertexes.Contains(i))
+                    {
+                        minAvailablePathlength = matrix[i, j];
+                        fromVertex = i;
+                        toVertex = j;
+                    }
+                }
+            }
+
+            _resultMatrix[fromVertex, toVertex] = minAvailablePathlength;
+            _resultMatrix[toVertex, fromVertex] = minAvailablePathlength;
+            pickedVertexes.Add(toVertex);
+            toVertex = 0;
+            minAvailablePathlength = int.MaxValue;
+        }
+
+
+        for (int i = 0; i < _resultMatrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < _resultMatrix.GetLength(1); j++)
+            {
+                Console.Write(matrix[i, j] + ' ');
+            }
+
+            Console.WriteLine();
+        }
     }
 
     private void Solve(int[][] array)
