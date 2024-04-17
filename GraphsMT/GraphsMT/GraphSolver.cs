@@ -1,65 +1,37 @@
-﻿namespace GraphsMT;
+﻿using System.Runtime.InteropServices.ComTypes;
 
-public class GraphSolver
+namespace GraphsMT;
+
+public static class GraphSolver
 {
-    private int[,]? _matrix;
-    //private int[,] _resultMatrix;
-    private int[][]? _arrayOfArrays;
-    //private int[][] _resultArrayOfArrays;
+    private static List<int> pickedVertexes = new List<int>();
+    private static ThreadSafeList<Path> currentLocalMinValues = new ThreadSafeList<Path>();
     
-    public GraphSolver(int[,]? matrix)
+    private static bool ValidateMatrix(int[,]? matrix)
     {
         if (matrix is null || matrix.GetLength(0) != matrix.GetLength(1))
         {
-            throw new Exception("Inccorect matrix in constructor!");
-        }
-        
-        _matrix = matrix;
-        //_resultMatrix = new int[matrix.GetLength(0),matrix.GetLength(1)];
-    }
-
-    public GraphSolver(int[][]? arrayOfArrays)
-    {
-        if (arrayOfArrays is null || arrayOfArrays.Length != arrayOfArrays[0].Length)
-        {
-            throw new Exception("Inccorect matrix in constructor!");
+            throw new Exception("Incorrect matrix for income!");
         }
 
-        int lastLength = arrayOfArrays[0].Length;
-        for (int i = 1; i < arrayOfArrays.Length; i++)
+        for (int i = 0; i < matrix.GetLength(0); i++)
         {
-            if (arrayOfArrays[i].Length != lastLength)
+            for (int j = 0; j < matrix.GetLength(1); j++)
             {
-                throw new Exception("Length of subarrays is different!");
+                if (matrix[i, j] < 0)
+                {
+                    throw new Exception("Negative value appears in the matrix!");
+                }
             }
         }
-        
-        _arrayOfArrays = arrayOfArrays;
-    }
 
-    // public void SolveWithPrim()
-    // {
-    //     if (_matrix is null)
-    //     {
-    //         if (_arrayOfArrays is not null)
-    //             Solve(_arrayOfArrays!);
-    //     }
-    //     else if (_arrayOfArrays is null)
-    //     {
-    //         if (_matrix is not null)
-    //             Solve(_matrix!);
-    //     }
-    //
-    //     throw new Exception("Both sources are null!");
-    // }
-    
-    
-    
+        return true;
+    }
 
     
     // !!!
-    // протестировать бы надо метод
-    public int[,] Solve(int[,] matrix)
+    // протестировать бы надо метод (протестировал: робит норм :) )
+    public static int[,] Solve(int[,] matrix)
     {
         var resultMatrix = new int[matrix.GetLength(0), matrix.GetLength(1)];
         
@@ -131,80 +103,86 @@ public class GraphSolver
         return resultMatrix;
     }
 
-    // private int[][] Solve(int[][] array)
-    // {
-    //     // инициализация
-    //     var resultArray = new int[array.Length][];
-    //     for (int i = 0; i < array.Length; i++)
-    //     {
-    //         resultArray[i] = new int[array.Length];
-    //     }
-    //     
-    //     // заметка: на самом деле как будто бы в качестве первого элемента можно взять любую вершину
-    //     // все равно же рано или поздно до нее доберемся
-    //     HashSet<int> pickedVertexes = new HashSet<int>() {0};
-    //     //bool firstVertexIsPicked = false;
-    //     int minAvailablePathlength = int.MaxValue;
-    //     int fromVertex = 0;
-    //     int toVertex = 0;
-    //     
-    //     // находим самый первый кратчайший путь из нулевой вершины
-    //     for (int i = 1; i < array.Length; i++)
-    //     {
-    //         if (array[0][i] != 0 && array[0][i] < minAvailablePathlength)
-    //         {
-    //             minAvailablePathlength = array[0][i];
-    //             toVertex = i;
-    //         }
-    //     }
-    //
-    //     resultArray[0][toVertex] = minAvailablePathlength;
-    //     resultArray[toVertex][0] = minAvailablePathlength;
-    //     pickedVertexes.Add(toVertex);
-    //     toVertex = 0;
-    //     minAvailablePathlength = int.MaxValue;
-    //     
-    //     //bool minAvailablePathlengthIsPicked = false; // true будет означать, что мы дейстивтельно выбрали это значение
-    //     // это сделано с целью проверки в графе реально был путь int.MaxValue или нет
-    //     // с другой стороны по сути мы на каждом этапе будем выбирать по одному значению
-    //     // не может быть ситуции, что за один обход мы по итогу так ничего и не включим в список вершин
-    //     
-    //     while (pickedVertexes.Count != array.Length)
-    //     {
-    //         for (int i = 0; i < array.Length; i++)
-    //         {
-    //             for (int j = 0; j < array.Length; j++)
-    //             {
-    //                 if (i == j || resultArray[i][j] != 0 || pickedVertexes.Contains(j))
-    //                     continue;
-    //
-    //                 if (array[i][j] < minAvailablePathlength && pickedVertexes.Contains(i))
-    //                 {
-    //                     minAvailablePathlength = array[i][j];
-    //                     fromVertex = i;
-    //                     toVertex = j;
-    //                 }
-    //             }
-    //         }
-    //
-    //         resultArray[fromVertex][toVertex] = minAvailablePathlength;
-    //         resultArray[toVertex][fromVertex] = minAvailablePathlength;
-    //         pickedVertexes.Add(toVertex);
-    //         toVertex = 0;
-    //         minAvailablePathlength = int.MaxValue;
-    //     }
-    //
-    //
-    //     for (int i = 0; i < resultArray.Length; i++)
-    //     {
-    //         for (int j = 0; j < resultArray.Length; j++)
-    //         {
-    //             Console.Write(resultArray[i][j] + ' ');
-    //         }
-    //
-    //         Console.WriteLine();
-    //     }
-    //     
-    //     return resultArray;
-    // }
+
+    // именно этот метод мы и будем запускать в нескольких потоках
+    // в качестве имеющихся вершин будем передавать вершины, которые мы уже имеем
+    // они будут находиться в статическом массиве в классе
+    // после того, как все потоки отработают, найдем минимальное значение, среди тех, что 
+    // они нам предоставили после работы
+    // ----------
+    // минимальные текущие значение после выполнения будут добавлять в статический список
+    // а уже потом хэш-сет выберет там минимальное расстояние и возьмет себе
+    // осталось понять, как узнать от какой вершину пришло это значение
+    private static void FindTheClosestVertex(int[,] matrix, int vertex) // отсчет вершин начинается с нуля (v=0,1,2...)
+    {
+        int minValue = int.MaxValue;
+        int destinationVertex = 0;
+        
+        for (int i = 0; i < matrix.GetLength(1); i++)
+        {
+            if (pickedVertexes.Contains(i) || matrix[vertex, i] == 0)
+                continue;
+
+            if (matrix[vertex, i] < minValue)
+            {
+                minValue = matrix[vertex, i];
+                destinationVertex = i;
+            }
+        }
+
+        currentLocalMinValues.Add(new Path(vertex, destinationVertex, minValue));
+    }
+    
+    
+    // нужен метод для нахождения вершин, что пока отсутствуют в pickedVertexes
+
+    public static int[,] SolvePrl(int[,] matrix)
+    {
+        int[,] resultMatrix = new int[matrix.GetLength(0), matrix.GetLength(1)];
+        
+        pickedVertexes.Add(0); // добавляем самую первую вершину 
+
+        while (pickedVertexes.Count != matrix.GetLength(0))
+        {
+            Task[] taskArray = new Task[pickedVertexes.Count];
+            
+            for (int i = 0; i < pickedVertexes.Count; i++)
+            {
+                int j = i; // избегаем замыкания
+                taskArray[i] = new Task(() => FindTheClosestVertex(matrix, pickedVertexes[j]));
+                taskArray[i].Start();
+            }
+
+            // ждем окончания всех тасок
+            foreach (var task in taskArray)
+            {
+                task.Wait();
+            }
+            
+            
+            // все, на этом этапе мы знаем вершину с минимальным расстоянием до нее
+
+            var minPath = currentLocalMinValues.Min();
+            currentLocalMinValues.Clear();
+            pickedVertexes.Add(minPath.DestinationVertex);
+            resultMatrix[minPath.SourceVertex, minPath.DestinationVertex] = minPath.Distance;
+            resultMatrix[minPath.DestinationVertex, minPath.SourceVertex] = minPath.Distance;
+        }
+        
+        for (int i = 0; i < resultMatrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < resultMatrix.GetLength(1); j++)
+            {
+                Console.Write(resultMatrix[i, j] + " ");
+            }
+
+            Console.WriteLine();
+        }
+        
+        // очищаем коллекции после работы
+        pickedVertexes.Clear();
+        currentLocalMinValues.Clear();
+
+        return resultMatrix;
+    }
 }
