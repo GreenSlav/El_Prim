@@ -1,10 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphsMT", "GraphsMT\GraphsMT.csproj", "{4ECD13EC-4D0C-4A0B-B2B7-D711923AC1A7}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphsMT", "GraphsMT\GraphsMT.csproj", "{4ECD13EC-4D0C-4A0B-B2B7-D711923AC1A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphsMTTests", "GraphsMTTests\GraphsMTTests.csproj", "{A7B55100-65DD-41E6-8084-C38618F7CE1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphsMTTests", "GraphsMTTests\GraphsMTTests.csproj", "{A7B55100-65DD-41E6-8084-C38618F7CE1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphs", "Graphs\Graphs.csproj", "{564046E2-7193-4B4A-A925-99CD57820D1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphs", "Graphs\Graphs.csproj", "{564046E2-7193-4B4A-A925-99CD57820D1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,7 +25,15 @@ Global
 		{A7B55100-65DD-41E6-8084-C38618F7CE1C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{564046E2-7193-4B4A-A925-99CD57820D1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{564046E2-7193-4B4A-A925-99CD57820D1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{564046E2-7193-4B4A-A925-99CD57820D1A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{564046E2-7193-4B4A-A925-99CD57820D1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{564046E2-7193-4B4A-A925-99CD57820D1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{564046E2-7193-4B4A-A925-99CD57820D1A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0F79D900-1BB0-4A9D-B821-210BB625AEA9}
 	EndGlobalSection
 EndGlobal
