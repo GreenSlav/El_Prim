@@ -3,12 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:drawable="clr-namespace:Graphs"
              x:Class="Graphs.MainPage"
-             Title="El Prim">
+             Title="El Prim"
+             Shell.BackgroundColor="Black"
+             Shell.TitleColor="White">
 
     <ContentPage.Resources>
         <drawable:GraphicsDrawable x:Key="GraphicsDrawable" />
     </ContentPage.Resources>
-    <VerticalStackLayout>
+    <VerticalStackLayout BackgroundColor="White">
         <GraphicsView Drawable="{StaticResource GraphicsDrawable}"
                       HeightRequest="300"
                       WidthRequest="400" />

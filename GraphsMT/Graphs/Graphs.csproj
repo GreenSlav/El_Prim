@@ -60,6 +60,16 @@
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Win32.SystemEvents" Version="8.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="System.Windows.Forms">
+        <HintPath>C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Windows.Forms.dll</HintPath>
+      </Reference>
+      <Reference Include="System.Windows.Forms.resources">
+        <HintPath>C:\Windows\WinSxS\x86_microsoft-windows-n..xcorecomp.resources_31bf3856ad364e35_10.0.19041.1_ru-ru_a6764003ca558068\System.Windows.Forms.resources.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>
