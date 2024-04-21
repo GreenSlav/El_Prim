@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:drawable="clr-namespace:Graphs"
+             x:Class="Graphs.MainPage"
+             Title="El Prim">
+
+    <ContentPage.Resources>
+        <drawable:GraphicsDrawable x:Key="GraphicsDrawable" />
+    </ContentPage.Resources>
+    <VerticalStackLayout>
+        <GraphicsView Drawable="{StaticResource GraphicsDrawable}"
+                      HeightRequest="300"
+                      WidthRequest="400" />
+    </VerticalStackLayout>
+</ContentPage>
