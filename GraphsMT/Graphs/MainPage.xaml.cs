@@ -8,8 +8,13 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
 
+        // BorderButton.IsVisible = false;
+        // BorderButton.IsEnabled = false;
+        //
+        BorderEntry.IsEnabled = true;
+        BorderEntry.IsVisible = true;
+        //
         BindingContext = mainPageViewModel;
+        Title = "El Prim";
     }
-
-    
 }

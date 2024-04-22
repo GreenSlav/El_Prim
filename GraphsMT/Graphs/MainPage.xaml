@@ -5,6 +5,7 @@
              xmlns:viewmodel="clr-namespace:Graphs.ViewModels"
              x:Class="Graphs.MainPage"
              x:DataType="viewmodel:MainPageViewModel"
+             Title="{Binding Title}"
              >
     
     
@@ -15,31 +16,51 @@
         <!-- <GraphicsView Drawable="{StaticResource GraphicsDrawable}" -->
         <!--               HeightRequest="300" -->
         <!--               WidthRequest="400" /> -->
-        
-        
-        <Border BackgroundColor="Black"
-                Stroke="Black"
-                Width="30"
-                TranslationY="{Binding EntryTranslationY}"
-                >
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="0,0,20,20" Width="20" />
-            </Border.StrokeShape>
-            <Border.Shadow>
-                <Shadow Brush="Black"
-                        Offset="20,20"
-                        Radius="40"
-                        Opacity="0.8"/>
-            </Border.Shadow>
-
-            <!-- <Frame BackgroundColor="White" CornerRadius="0" BorderColor="Black"> -->
-                <Entry Placeholder="Enter integers for your matrix" X="0" Y="0" PlaceholderColor="#b8b8b8" TextColor="White" FontSize="25" Margin="10, 10, 10, 10" ReturnCommand="{Binding RemoveEntryCommand}"></Entry>
+        <AbsoluteLayout>
+            <Border BackgroundColor="Black"
+                    Stroke="Black"
+                    Width="30"
+                    ZIndex="1"
+                    AbsoluteLayout.LayoutBounds="30, 0"
+            >
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="0,0,20,20" Width="20" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black"
+                            Offset="20,20"
+                            Radius="40"
+                            Opacity="0.8"/>
+                </Border.Shadow>
+                
+                <Button x:Name="BorderButton" FontSize="20" IsEnabled="{Binding IsEnabledBorderButton}" IsVisible="{Binding IsVisibleBorderButton}" ZIndex="-1" X="0" Y="0" Text="Enter matrix" TextColor="White" BackgroundColor="Black" Command="{Binding GetBackEntryCommand}"></Button>
+            </Border>
             
-            <!-- </Frame> -->
-        </Border>
+            <Border BackgroundColor="Black"
+                    Stroke="Black"
+                    Width="30"
+                    TranslationY="{Binding EntryTranslationY}"
+                    ZIndex="1"
+                    AbsoluteLayout.LayoutBounds="20, 0"
+                    
+            >
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="0,0,20,20" Width="20" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black"
+                            Offset="20,20"
+                            Radius="40"
+                            Opacity="0.8"/>
+                </Border.Shadow>
+
+                <!-- <Frame BackgroundColor="White" CornerRadius="0" BorderColor="Black"> -->
+                <Entry Text="{Binding EnteredBorderEntryText}" x:Name="BorderEntry" MinimumWidthRequest="200" IsEnabled="{Binding IsEnabledEntry}" HorizontalOptions="Fill" X="0" Y="0" PlaceholderColor="#b8b8b8" TextColor="White" FontSize="25" Margin="10, 10, 10, 10" ReturnCommand="{Binding RemoveEntryCommand}" Placeholder="Enter integers for your matrix"></Entry>
+            
+                <!-- </Frame> -->
+            </Border>
+        </AbsoluteLayout>
         
-        
-        
-        
+        <!-- а вот здесь будут рисоваться графы -->
     </VerticalStackLayout>
 </ContentPage>

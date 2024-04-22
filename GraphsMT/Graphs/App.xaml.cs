@@ -1,6 +1,7 @@
 ﻿//using System.Windows.Forms;
 
 using System.Diagnostics;
+using Graphs.ViewModels;
 
 namespace Graphs;
 
