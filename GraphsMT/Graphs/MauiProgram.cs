@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Graphs.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace Graphs;
 
@@ -20,6 +21,10 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
+
+        builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddSingleton<MainPageViewModel>();
+
 
         return builder.Build();
     }

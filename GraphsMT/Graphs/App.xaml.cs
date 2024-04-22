@@ -1,5 +1,7 @@
 ﻿//using System.Windows.Forms;
 
+using System.Diagnostics;
+
 namespace Graphs;
 
 public partial class App : Application
@@ -10,7 +12,15 @@ public partial class App : Application
 
         MainPage = new AppShell();
     }
-    
+
+    // OnLoad method
+    protected override void OnStart()
+    {
+        base.OnStart();
+        
+        Debug.WriteLine("OnLoad method worked!!!!");
+    }
+
     protected override Window CreateWindow(IActivationState? activationState)
     {
         var window = base.CreateWindow(activationState);
