@@ -5,7 +5,37 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Graphs"
     Shell.FlyoutBehavior="Disabled"
-    Title="Graphs">
+    Title="El Prim"
+    >
+    
+    
+    <Shell.TitleView>
+        <HorizontalStackLayout VerticalOptions="Fill" BackgroundColor="Black">
+            <Label
+                Padding="10, 10, 10, 10"
+                Text="El Prim"
+                FontFamily="Caveat"
+                TextColor="White"
+                VerticalTextAlignment="Center"
+                VerticalOptions="Center"
+                HeightRequest="50"
+                FontSize="40" />
+        </HorizontalStackLayout>
+    </Shell.TitleView>
+
+    
+    <!-- Это навигация снизу -->
+    <!-- <TabBar> -->
+    <!--     <ShellContent Title="Cats" -->
+    <!--                   Icon="cat.png" -->
+    <!--                   ContentTemplate="{DataTemplate views:CatsPage}" /> -->
+    <!--     <ShellContent Title="Dogs" -->
+    <!--                   Icon="dog.png" -->
+    <!--                   ContentTemplate="{DataTemplate views:DogsPage}" /> -->
+    <!--     <ShellContent Title="Monkeys" -->
+    <!--                   Icon="monkey.png" -->
+    <!--                   ContentTemplate="{DataTemplate views:MonkeysPage}" /> -->
+    <!-- </TabBar> -->
 
     <ShellContent
         Title="Home"
