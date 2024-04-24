@@ -6,6 +6,27 @@ namespace Graphs.ViewModels;
 
 public partial class MainPageViewModel : ObservableObject
 {
+    // сюда из изначальной матрицы будут записываться пути в формате "13": путь из 1 в 3 и наоборот
+    // чтоб при отрисовке пути понимать, был ли он уже отрисован(содержится в нашем сете) или нет
+    private HashSet<string> _existedGraphPaths = new();
+
+    // сет использованных для графов цветов
+    public HashSet<string> UsedColorsForGraph = new();
+
+
+    private int[,] matrixForExample = {
+        {0, 3, 1, 2, 2},
+        {3, 0, 8, 3, 1},
+        {1, 8, 0, 1, 4},
+        {1, 1, 1, 0, 6},
+        {2, 1, 4, 6, 0}
+    };
+
+    async Task DrawMatrixGraph()
+    {
+        
+    }
+    
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     bool isBusy;

@@ -10,6 +10,8 @@ public class GraphicsDrawable : IDrawable
         
         
         canvas.StrokeSize = 1;
-        canvas.DrawLine(10, 10, 90, 100);
+        
+        canvas.DrawLine(10, 10, new Random().Next(300, 1920), new Random().Next(300, 1080));
+         
     }      
 }

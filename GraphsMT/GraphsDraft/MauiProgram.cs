@@ -1,5 +1,4 @@
-﻿using Graphs.ViewModels;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
 
 #if WINDOWS
@@ -7,7 +6,7 @@ using Microsoft.UI;
 using Microsoft.UI.Windowing;
 #endif
 
-namespace Graphs;
+namespace GraphsDraft;
 
 public static class MauiProgram
 {
@@ -20,12 +19,9 @@ public static class MauiProgram
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                fonts.AddFont("Roboto-Medium.ttf", "RobotoMedium");
-                fonts.AddFont("Caveat-VariableFont_wght.ttf", "Caveat");
             });
         
-        
-            builder.ConfigureLifecycleEvents(events =>
+        builder.ConfigureLifecycleEvents(events =>
         {
 #if WINDOWS
             events.AddWindows(w =>
@@ -45,10 +41,6 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-
-        builder.Services.AddSingleton<MainPage>();
-        builder.Services.AddSingleton<MainPageViewModel>();
-
 
         return builder.Build();
     }

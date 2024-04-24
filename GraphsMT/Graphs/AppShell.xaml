@@ -10,6 +10,7 @@
     
     <Shell.TitleView>
         <HorizontalStackLayout VerticalOptions="Fill" BackgroundColor="Black">
+            <!-- Если содержимое будет выше TitleView, то он добавит дебильные 3 точки справа -->
             <Label
                 Padding="10, 0, 10, 0"
                 Text="El Prim"
