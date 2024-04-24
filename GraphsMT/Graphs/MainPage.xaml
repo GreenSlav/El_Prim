@@ -12,11 +12,9 @@
     <ContentPage.Resources>
         <drawable:GraphicsDrawable x:Key="GraphicsDrawable" />
     </ContentPage.Resources>
-    <VerticalStackLayout BackgroundColor="White">
-        <!-- <GraphicsView Drawable="{StaticResource GraphicsDrawable}" -->
-        <!--               HeightRequest="300" -->
-        <!--               WidthRequest="400" /> -->
+    <VerticalStackLayout BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill">
         <AbsoluteLayout>
+            <!-- Return input button -->
             <Border BackgroundColor="Black"
                     Stroke="Black"
                     Width="30"
@@ -33,9 +31,16 @@
                             Opacity="0.8"/>
                 </Border.Shadow>
                 
-                <Button x:Name="BorderButton" FontSize="20" IsEnabled="{Binding IsEnabledBorderButton}" IsVisible="{Binding IsVisibleBorderButton}" ZIndex="-1" X="0" Y="0" Text="Enter matrix" TextColor="White" BackgroundColor="Black" Command="{Binding GetBackEntryCommand}"></Button>
+                <Button x:Name="BorderButton" FontSize="20" IsEnabled="{Binding IsEnabledBorderButton}" 
+                        IsVisible="{Binding IsVisibleBorderButton}" ZIndex="-1" X="0" Y="0" Text="Enter matrix"
+                        TextColor="White" BackgroundColor="Black" Command="{Binding GetBackEntryCommand}">
+                    
+                </Button>
             </Border>
             
+            <!-- ======================================= -->
+            
+            <!-- Entry for matrix -->
             <Border BackgroundColor="Black"
                     Stroke="Black"
                     Width="30"
@@ -53,14 +58,32 @@
                             Radius="40"
                             Opacity="0.8"/>
                 </Border.Shadow>
-
-                <!-- <Frame BackgroundColor="White" CornerRadius="0" BorderColor="Black"> -->
-                <Entry Text="{Binding EnteredBorderEntryText}" x:Name="BorderEntry" MinimumWidthRequest="200" IsEnabled="{Binding IsEnabledEntry}" HorizontalOptions="Fill" X="0" Y="0" PlaceholderColor="#b8b8b8" TextColor="White" FontSize="25" Margin="10, 10, 10, 10" ReturnCommand="{Binding RemoveEntryCommand}" Placeholder="Enter integers for your matrix"></Entry>
-            
-                <!-- </Frame> -->
+                
+                <Entry Text="{Binding EnteredBorderEntryText}" x:Name="BorderEntry" 
+                       MinimumWidthRequest="200" IsEnabled="{Binding IsEnabledEntry}" 
+                       HorizontalOptions="Fill" X="0" Y="0" PlaceholderColor="#b8b8b8" TextColor="White" 
+                       FontSize="25" Margin="10, 10, 10, 10" 
+                       ReturnCommand="{Binding RemoveEntryCommand}" 
+                       Placeholder="Enter integers for your matrix" >
+                    
+                </Entry>
+                
             </Border>
+            
+            <!-- ======================================= -->
+
         </AbsoluteLayout>
         
-        <!-- а вот здесь будут рисоваться графы -->
+        <!-- ============================================================ -->
+        <!-- Отрисовка графов ниже -->
+        <VerticalStackLayout Margin="0, 30, 0, 0" HorizontalOptions="Fill" VerticalOptions="Fill" BackgroundColor="Black">
+            <GraphicsView Drawable="{StaticResource GraphicsDrawable}"
+                          x:Name="GraphViewXAML"
+                          HorizontalOptions="Fill" VerticalOptions="Fill"
+                          />
+        </VerticalStackLayout>
+        <!-- <GraphicsView Drawable="{StaticResource GraphicsDrawable}" -->
+        <!--               HeightRequest="300" -->
+        <!--               WidthRequest="400" /> -->
     </VerticalStackLayout>
 </ContentPage>

@@ -1,5 +1,11 @@
 ﻿using Graphs.ViewModels;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.LifecycleEvents;
+
+#if WINDOWS
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
+#endif
 
 namespace Graphs;
 
@@ -17,6 +23,23 @@ public static class MauiProgram
                 fonts.AddFont("Roboto-Medium.ttf", "RobotoMedium");
                 fonts.AddFont("Caveat-VariableFont_wght.ttf", "Caveat");
             });
+        
+            builder.ConfigureLifecycleEvents(events =>
+        {
+#if WINDOWS
+            events.AddWindows(w =>
+            {
+                w.OnWindowCreated(window =>
+                {
+                    window.ExtendsContentIntoTitleBar = true; //If you need to completely hide the minimized maximized close button, you need to set this value to false.
+                    IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                    WindowId myWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+                    var _appWindow = AppWindow.GetFromWindowId(myWndId);
+                    _appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+                });
+            });
+#endif
+        });
 
 #if DEBUG
         builder.Logging.AddDebug();

@@ -11,16 +11,23 @@
     <Shell.TitleView>
         <HorizontalStackLayout VerticalOptions="Fill" BackgroundColor="Black">
             <Label
-                Padding="10, 10, 10, 10"
+                Padding="10, 0, 10, 0"
                 Text="El Prim"
-                FontFamily="Caveat"
                 TextColor="White"
+                FontSize="35"
                 VerticalTextAlignment="Center"
                 VerticalOptions="Center"
-                HeightRequest="50"
-                FontSize="40" />
+                FontFamily="Caveat"
+                />
+            <!-- FontSize="40" -->
+            <!-- HeightRequest="50" -->
+            <!-- VerticalTextAlignment="Center" -->
+            <!-- VerticalOptions="Center" -->
+            <!-- FontFamily="Caveat" -->
         </HorizontalStackLayout>
     </Shell.TitleView>
+    
+    
 
     
     <!-- Это навигация снизу -->
