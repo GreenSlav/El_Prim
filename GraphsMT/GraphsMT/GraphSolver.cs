@@ -154,10 +154,7 @@ public static class GraphSolver
             }
 
             // ждем окончания всех тасок
-            foreach (var task in taskArray)
-            {
-                task.Wait();
-            }
+            Task.WaitAll(taskArray);
             
             
             // все, на этом этапе мы знаем вершину с минимальным расстоянием до нее

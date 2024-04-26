@@ -11,7 +11,7 @@
     </ContentPage.Resources>
     
     <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill" BackgroundColor="White">
-        <!-- <Entry Text="{Binding EntryText}" ReturnCommand="{Binding }"></Entry> -->
+        <Entry Text="{Binding EntryText}" ReturnCommand="{Binding }"></Entry>
         <!-- <GraphicsView Drawable="{StaticResource GraphicsDrawable}" -->
         <!--               x:Name="GraphViewXAML" -->
         <!--               HorizontalOptions="Fill" VerticalOptions="Fill" -->
@@ -22,7 +22,7 @@
         <AbsoluteLayout>
             <Polygon Points="1920,0  1820,0  0,1080  100,1080"
                      Stroke="Transparent"
-                     StrokeThickness="5" 
+                     StrokeThickness="5"
                      AbsoluteLayout.LayoutBounds="0, 0">
                 <Polygon.Fill>
                     <LinearGradientBrush StartPoint="1, 0" EndPoint="0,1">
@@ -33,7 +33,7 @@
             </Polygon>
             <Polygon Points="0,0  100,0  1920,1080  1820,1080"
                      Stroke="Transparent"
-                     StrokeThickness="5" 
+                     StrokeThickness="5"
                      AbsoluteLayout.LayoutBounds="0, 0">
                 <Polygon.Fill>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">

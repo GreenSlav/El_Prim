@@ -4,6 +4,7 @@ namespace GraphsDraft.ViewModels;
 
 public partial class MainPageViewModel : ObservableObject
 {
+    
     private HashSet<string> VisitedVertexes = new();
     
     [ObservableProperty] 

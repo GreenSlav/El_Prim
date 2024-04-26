@@ -4,6 +4,8 @@ namespace GraphsDraft;
 
 public partial class MainPage : ContentPage
 {
+    
+    
     public static System.Timers.Timer MinimumSpanningTreeTimer;
     public static System.Timers.Timer FullGraphTimer;
 

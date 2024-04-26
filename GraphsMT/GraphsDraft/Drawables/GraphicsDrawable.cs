@@ -9,31 +9,31 @@ public class GraphicsDrawable : IDrawable
     
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
-        // Vertex vertex = new Vertex(3, 960-40, 540-40);
-        // canvas.FillColor = ColorGenerator();
-        // canvas.StrokeSize = 0;
-        // canvas.FillEllipse(vertex.X, vertex.Y, 80, 80);
+        Vertex vertex = new Vertex(3, 960-40, 540-40);
+        canvas.FillColor = ColorGenerator();
+        canvas.StrokeSize = 0;
+        canvas.FillEllipse(vertex.X, vertex.Y, 80, 80);
         
         
         
-        // Vertex vertex1 = new Vertex(1, 1800, 800);
-        // Vertex vertex2 = new Vertex(2, 200, 500);
-        //
-        // canvas.FillColor = Colors.Red;
-        // canvas.StrokeSize = 0;
-        // canvas.FillEllipse(vertex1.X, vertex1.Y, 75, 75);
-        // canvas.FillEllipse(vertex2.X, vertex2.Y, 75, 75);
-        //
-        // canvas.FontColor = Colors.GreenYellow;
-        // canvas.FontSize = 25;
-        //
-        // canvas.Font = Font.DefaultBold;
-        // canvas.DrawString(vertex1.Number.ToString(), vertex1.X, vertex1.Y, 75, 75, HorizontalAlignment.Center, VerticalAlignment.Center);
-        // canvas.DrawString(vertex2.Number.ToString(), vertex2.X, vertex2.Y, 75, 75, HorizontalAlignment.Center, VerticalAlignment.Center);
-        //
-        //
-        //
-        // DrawLineBetweenVertexes(canvas, dirtyRect, vertex1, vertex2, 75);
+        Vertex vertex1 = new Vertex(1, 100, 250);
+        Vertex vertex2 = new Vertex(2, 1000, 800);
+        
+        canvas.FillColor = Colors.Red;
+        canvas.StrokeSize = 0;
+        canvas.FillEllipse(vertex1.X, vertex1.Y, 75, 75);
+        canvas.FillEllipse(vertex2.X, vertex2.Y, 75, 75);
+        
+        canvas.FontColor = Colors.GreenYellow;
+        canvas.FontSize = 25;
+        
+        canvas.Font = Font.DefaultBold;
+        canvas.DrawString(vertex1.Number.ToString(), vertex1.X, vertex1.Y, 75, 75, HorizontalAlignment.Center, VerticalAlignment.Center);
+        canvas.DrawString(vertex2.Number.ToString(), vertex2.X, vertex2.Y, 75, 75, HorizontalAlignment.Center, VerticalAlignment.Center);
+        
+        
+        
+        DrawLineBetweenVertexes(canvas, dirtyRect, vertex1, vertex2, 75);
     }
 
 
@@ -82,7 +82,6 @@ public class GraphicsDrawable : IDrawable
         canvas.StrokeColor = Colors.Red;
         canvas.StrokeSize = 3;
         canvas.DrawLine(source, destination);
-        
     }
     
     
