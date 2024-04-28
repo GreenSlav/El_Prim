@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Diagnostics;
+using System.Reflection;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Forms;
 
@@ -12,6 +14,8 @@ public partial class MainPageViewModel : ObservableObject
 
     // сет использованных для графов цветов
     public HashSet<string> UsedColorsForGraph = new();
+
+    private static string PathToDll = "";
 
 
     private int[,] matrixForExample = {
@@ -52,6 +56,9 @@ public partial class MainPageViewModel : ObservableObject
     string enteredBorderEntryText;
     
     // AssemblyButton
+    [ObservableProperty] 
+    bool dllLoadedSuccesfully; // т этого будет зависеть можно ли будет нажать enter в entry
+    
     [ObservableProperty] 
     Color backgroundColorAssemblyButton;
     public Rect AbsLayoutAssebmlyButton => new Rect(20, EntryTranslationY + 65, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize);
@@ -100,8 +107,83 @@ public partial class MainPageViewModel : ObservableObject
     }
 
 
-    private bool LoadDll(string pathToDll)
+    [RelayCommand]
+    private async Task<bool> LoadDll(string pathToDll)
     {
         return true;
+    }
+
+
+    private async Task<bool> IsValidDll(Assembly assemby)
+    {
+        return true;
+    }
+    
+    
+    private async void Button_Clicked()
+    {
+        // Вызываем метод для выбора файла DLL
+        var pickedFile = await PickFile();
+
+        if (pickedFile != null)
+        {
+            try
+            {
+                // Загружаем DLL-файл в память через поток
+                Assembly assembly = null;
+                using (var stream = await pickedFile.OpenReadAsync())
+                {
+                    var assemblyData = new byte[stream.Length];
+                    await stream.ReadAsync(assemblyData, 0, assemblyData.Length);
+                    assembly = Assembly.Load(assemblyData);
+                }
+
+                if (assembly != null)
+                {
+                    // DLL успешно загружена, можно выполнять дальнейшие действия
+                    Debug.WriteLine("DLL успешно загружена.");
+                }
+                else
+                {
+                    // DLL не загружена из-за ошибки
+                    Debug.WriteLine("Ошибка загрузки DLL.");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Обработка исключений при загрузке DLL
+                Debug.WriteLine($"Ошибка при загрузке DLL: {ex.Message}");
+            }
+        }
+    }
+
+        // Метод для выбора DLL-файла
+    private async Task<FileResult?> PickFile()
+    {
+        var dllFileType = new FilePickerFileType(
+            new Dictionary<DevicePlatform, IEnumerable<string>>
+            {
+                { DevicePlatform.WinUI, new[] { ".dll" } },
+            });
+        
+        try
+        {
+            // Вызываем метод для открытия проводника и выбора DLL-файла
+            var pickedFile = await FilePicker.PickAsync(new PickOptions
+            {
+                FileTypes = dllFileType, // Указываем тип файла DLL
+                PickerTitle = "Выберите DLL-файл" // Заголовок окна выбора файла
+            });
+
+            PathToDll = pickedFile.FullPath;
+            
+            return pickedFile;
+        }
+        catch (Exception ex)
+        {
+            // Обработка исключений при выборе файла
+            Debug.WriteLine($"Ошибка при выборе файла: {ex.Message}");
+            return null;
+        }
     }
 }

@@ -2,12 +2,12 @@
 
 namespace GraphsMT;
 
-public static class GraphSolver
+public class GraphSolver : IGraphSolver
 {
     private static List<int> pickedVertexes = new List<int>();
     private static ThreadSafeList<Path> currentLocalMinValues = new ThreadSafeList<Path>();
     
-    private static bool ValidateMatrix(int[,]? matrix)
+    public bool ValidateMatrix(int[,]? matrix)
     {
         if (matrix is null || matrix.GetLength(0) != matrix.GetLength(1))
         {
@@ -31,7 +31,7 @@ public static class GraphSolver
     
     // !!!
     // протестировать бы надо метод (протестировал: робит норм :) )
-    public static int[,] Solve(int[,] matrix)
+    public int[,] Solve(int[,] matrix)
     {
         var resultMatrix = new int[matrix.GetLength(0), matrix.GetLength(1)];
         
@@ -136,7 +136,7 @@ public static class GraphSolver
     
     // нужен метод для нахождения вершин, что пока отсутствуют в pickedVertexes
 
-    public static int[,] SolvePrl(int[,] matrix)
+    public int[,] SolvePrl(int[,] matrix)
     {
         int[,] resultMatrix = new int[matrix.GetLength(0), matrix.GetLength(1)];
         

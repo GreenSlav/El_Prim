@@ -73,12 +73,12 @@ class Program
          */
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        GraphSolver.SolvePrl(adjacencyMatrix10x10);
+        //GraphSolver.SolvePrl(adjacencyMatrix10x10);
         Console.WriteLine(stopwatch.Elapsed);
         stopwatch.Reset();
         
         stopwatch.Start();
-        GraphSolver.Solve(adjacencyMatrix10x10);
+        //GraphSolver.Solve(adjacencyMatrix10x10);
         Console.WriteLine(stopwatch.Elapsed);
         
 

@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace GraphsMT;
 
-public class ThreadSafeList<T> : IList<T>
+public class ThreadSafeList<T> : IList<T>, IThreadSafeList<T>
 {
     private readonly List<T> _list = new List<T>();
     private readonly object _lock = new object();
@@ -43,8 +43,22 @@ public class ThreadSafeList<T> : IList<T>
             return _list.Min();
         }
     }
-    
-    
+
+    public T Max()
+    {
+        lock (_lock)
+        {
+            
+            if (_list.Count == 0)
+            {
+                throw new InvalidOperationException("Список пуст");
+            }
+
+            return _list.Max();
+        }
+    }
+
+
     public IEnumerator<T> GetEnumerator()
     {
         lock (_lock)

@@ -93,7 +93,8 @@
                 </Border.Shadow>
                 
                 <Button FontSize="20" ZIndex="1" Text="Choose assembly"
-                        TextColor="White" BackgroundColor="{Binding BackgroundColorAssemblyButton}">
+                        TextColor="White" BackgroundColor="{Binding BackgroundColorAssemblyButton}"
+                        Command="{Binding LoadDllCommand}">
                     
                 </Button>
             </Border>
