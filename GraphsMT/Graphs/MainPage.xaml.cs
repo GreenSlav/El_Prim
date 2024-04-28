@@ -11,22 +11,28 @@ public partial class MainPage : ContentPage
     public MainPage(MainPageViewModel mainPageViewModel)
     {
         InitializeComponent();
-
+        
         // Передал из XAML ссылку на GraphicsView, в котором и будут отрисовываться вершины
         GraphView = GraphViewXAML;
         GraphView.HeightRequest = Screen.PrimaryScreen.Bounds.Height;
         GraphView.WidthRequest = Screen.PrimaryScreen.Bounds.Width;
         
-        BorderEntry.IsEnabled = true;
-        BorderEntry.IsVisible = true;
+        BEntry.IsEnabled = true;
+        BEntry.IsVisible = true;
         //
         BindingContext = mainPageViewModel;
         Title = "El Prim";
 
-        var timer = new System.Timers.Timer(1000);
-        timer.AutoReset = true;
-        timer.Elapsed += async (sender, e) => await RedrawClock(sender, e);
-        timer.Start();
+
+        var s = EntryBorder;
+        var a = s.X;
+        var b = s.Y;
+        
+
+        // var timer = new System.Timers.Timer(1000);
+        // timer.AutoReset = true;
+        // timer.Elapsed += async (sender, e) => await RedrawClock(sender, e);
+        // timer.Start();
     }
     
     

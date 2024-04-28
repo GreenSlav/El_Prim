@@ -44,11 +44,18 @@ public partial class MainPageViewModel : ObservableObject
     
     // BorderEntry
     [ObservableProperty] 
+    [NotifyPropertyChangedFor(nameof(AbsLayoutAssebmlyButton))]
     int entryTranslationY;
     [ObservableProperty]
     bool isEnabledEntry;
     [ObservableProperty]
     string enteredBorderEntryText;
+    
+    // AssemblyButton
+    [ObservableProperty] 
+    Color backgroundColorAssemblyButton;
+    public Rect AbsLayoutAssebmlyButton => new Rect(20, EntryTranslationY + 65, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize);
+    
 
 
     [RelayCommand]
@@ -63,7 +70,7 @@ public partial class MainPageViewModel : ObservableObject
         
         while (EntryTranslationY > -target)
         {
-            await Task.Delay(4);
+            await Task.Delay(10);
             --EntryTranslationY;
         }
 
@@ -84,11 +91,17 @@ public partial class MainPageViewModel : ObservableObject
         
         while (EntryTranslationY != target)
         {
-            await Task.Delay(4);
+            await Task.Delay(10);
             ++EntryTranslationY;
         }
         
         IsEnabledEntry = true;
         IsVisibleBorderButton = false;
+    }
+
+
+    private bool LoadDll(string pathToDll)
+    {
+        return true;
     }
 }

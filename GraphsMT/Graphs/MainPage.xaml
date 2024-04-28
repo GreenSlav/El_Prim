@@ -27,9 +27,9 @@
                 </Border.StrokeShape>
                 <Border.Shadow>
                     <Shadow Brush="Black"
-                            Offset="20,20"
-                            Radius="40"
-                            Opacity="0.8"/>
+                            Offset="10,10"
+                            Radius="20"
+                            Opacity="0.5"/>
                 </Border.Shadow>
                 
                 <Button x:Name="BorderButton" FontSize="20" IsEnabled="{Binding IsEnabledBorderButton}" 
@@ -47,21 +47,24 @@
                     Width="30"
                     TranslationY="{Binding EntryTranslationY}"
                     ZIndex="1"
+                    x:Name="EntryBorder"
+                    MaximumHeightRequest="65"
                     AbsoluteLayout.LayoutBounds="20, 0"
                     
             >
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="0,0,20,20" Width="20" />
+                    <RoundRectangle CornerRadius="0,0,0,20" Width="20" />
                 </Border.StrokeShape>
                 <Border.Shadow>
                     <Shadow Brush="Black"
-                            Offset="20,20"
-                            Radius="40"
-                            Opacity="0.8"/>
+                            Offset="10,10"
+                            Radius="20"
+                            Opacity="0.5"/>
                 </Border.Shadow>
                 
-                <Entry Text="{Binding EnteredBorderEntryText}" x:Name="BorderEntry"
-                       MinimumWidthRequest="200" IsEnabled="{Binding IsEnabledEntry}"
+                <Entry Text="{Binding EnteredBorderEntryText}" x:Name="BEntry"
+                       MinimumWidthRequest="200"
+                       IsEnabled="{Binding IsEnabledEntry}"
                        HorizontalOptions="Fill" X="0" Y="0" PlaceholderColor="#b8b8b8" TextColor="White"
                        FontSize="25" Margin="10, 10, 10, 10"
                        ReturnCommand="{Binding RemoveEntryCommand}"
@@ -70,6 +73,31 @@
                 </Entry>
                 
             </Border>
+            
+            <!-- Return input button -->
+            <Border BackgroundColor="Black"
+                    Stroke="Black"
+                    Width="30"
+                    ZIndex="1"
+                    AbsoluteLayout.LayoutBounds="{Binding AbsLayoutAssebmlyButton}"
+                    
+            >
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="0,0,20,20" Width="20" />
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black"
+                            Offset="10,10"
+                            Radius="20"
+                            Opacity="0.5"/>
+                </Border.Shadow>
+                
+                <Button FontSize="20" ZIndex="1" Text="Choose assembly"
+                        TextColor="White" BackgroundColor="{Binding BackgroundColorAssemblyButton}">
+                    
+                </Button>
+            </Border>
+            
             
             <!-- ======================================= -->
 
