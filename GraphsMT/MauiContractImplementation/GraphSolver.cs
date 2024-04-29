@@ -1,6 +1,6 @@
-﻿using System.Runtime.InteropServices.ComTypes;
+using MauiContract;
 
-namespace GraphsMT;
+namespace MauiContractImplementation;
 
 public class GraphSolver : IGraphSolver
 {

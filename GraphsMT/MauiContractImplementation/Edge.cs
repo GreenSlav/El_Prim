@@ -1,12 +1,15 @@
-namespace GraphsMT;
+using MauiContract;
 
-public class Path : IComparable<Path>
+namespace MauiContractImplementation;
+
+
+public class Edge : AbstractEdge, IComparable<Edge>
 {
     public int SourceVertex { get; }
     public int DestinationVertex { get; }
     public int Distance { get; }
     
-    public Path(int sourceVertex, int destinationVertex, int distance)
+    public Edge(int sourceVertex, int destinationVertex, int distance)
     {
         SourceVertex = sourceVertex;
         DestinationVertex = destinationVertex;
@@ -15,7 +18,7 @@ public class Path : IComparable<Path>
 
     
 
-    public int CompareTo(Path? other)
+    public int CompareTo(Edge? other)
     {
         if (other == null)
         {

@@ -1,8 +1,8 @@
 namespace GraphsMT;
 
-class PathComparer : IComparer<Path>
+class EdgeComparer : IComparer<Edge>
 {
-    public int Compare(Path x, Path y)
+    public int Compare(Edge x, Edge y)
     {
         if (x == null || y == null)
         {
