@@ -42,4 +42,9 @@ public partial class MainPage : ContentPage
 
         graphicsView.Invalidate(); 
     }
+
+    public async Task DrawSmth()
+    {
+        
+    }
 }

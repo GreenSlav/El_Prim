@@ -9,7 +9,8 @@ namespace Graphs.ViewModels;
 public partial class MainPageViewModel : ObservableObject
 {
     // текущий путь до сборки с реализацией
-    public Assembly MainAssembly;
+    // D:\maui_last_stable\El_Prim\GraphsMT\MauiContractImplementation\bin\Debug\net8.0
+    public static Assembly MainAssembly = null;
 
     public const string PathToContract = "D:\\maui_last_stable\\El_Prim\\GraphsMT\\MauiContract\\bin\\Debug\\net8.0\\MauiContract.dll";
     // сюда из изначальной матрицы будут записываться пути в формате "13": путь из 1 в 3 и наоборот
@@ -125,57 +126,94 @@ public partial class MainPageViewModel : ObservableObject
     [RelayCommand]
     private async Task<bool> LoadDll(string pathToDll)
     {
-        var pickedFile = await PickFile();
-
-        
-        if (pickedFile != null)
+        try
         {
-            Assembly assembly = null;
-            // запасной вариант
-            // using (var stream = await pickedFile.OpenReadAsync())
-            // {
-            //     var assemblyData = new byte[stream.Length];
-            //     await stream.ReadAsync(assemblyData, 0, assemblyData.Length);
-            //     assembly = Assembly.Load(assemblyData);
-            // }
-            assembly = Assembly.LoadFrom(pickedFile.FullPath);
+            var pickedFile = await PickFile();
             
-            if (assembly != null)
+            if (pickedFile != null)
             {
-                // DLL успешно загружена, можно выполнять дальнейшие действия
-                Debug.WriteLine("DLL успешно загружена.");
-                
-                // тут нужно проверить корректность сборки
-                bool loadedDllIsValid = await IsValidDll(assembly);
-
-                if (loadedDllIsValid)
+                Assembly assembly = null;
+                // запасной вариант
+                // using (var stream = await pickedFile.OpenReadAsync())
+                // {
+                //     var assemblyData = new byte[stream.Length];
+                //     await stream.ReadAsync(assemblyData, 0, assemblyData.Length);
+                //     assembly = Assembly.Load(assemblyData);
+                // }
+                assembly = Assembly.LoadFrom(pickedFile.FullPath);
+            
+                if (assembly != null)
                 {
-                    BackgroundColorAssemblyButton = Color.FromArgb("#2ef24f");
-                    PlaceholderText = "Enter integers for your matrix";
-                    PlaceHolderTextColor = Color.FromArgb("#b8b8b8");
-                    MainAssembly = assembly;
+                    // DLL успешно загружена, можно выполнять дальнейшие действия
+                    Debug.WriteLine("DLL успешно загружена.");
+                
+                    // тут нужно проверить корректность сборки
+                    bool loadedDllIsValid = await IsValidDll(assembly);
+
+                    if (loadedDllIsValid)
+                    {
+                        BackgroundColorAssemblyButton = Color.FromArgb("#1fa136");
+                        PlaceholderText = "Enter integers for your matrix";
+                        PlaceHolderTextColor = Color.FromArgb("#b8b8b8");
+                        MainAssembly = assembly;
+                        
+                        return true;
+                    }
+                    else
+                    {
+                        BackgroundColorAssemblyButton = Color.FromArgb("#ff1717");
+                        // На время сохраняем текст
+
+                        PlaceholderText = "Wrong assembly was chosen!";
+                        PlaceHolderTextColor = Color.FromArgb("#ff1717");
+                        MainAssembly = null;
+
+                        return false;
+                    }
                 }
                 else
                 {
+                    // DLL не загружена из-за ошибки
+                    Debug.WriteLine("Ошибка загрузки DLL.");
                     BackgroundColorAssemblyButton = Color.FromArgb("#ff1717");
-                    // На время сохраняем текст
-                    string backupText = PlaceholderText;
-                    Color backupColor = PlaceHolderTextColor;
-
-                    PlaceholderText = "Wrong assembly was chosen!";
+                    PlaceholderText = "Dll loading error!";
                     PlaceHolderTextColor = Color.FromArgb("#ff1717");
                     MainAssembly = null;
+
+                    return false;
                 }
             }
             else
             {
-                // DLL не загружена из-за ошибки
-                Debug.WriteLine("Ошибка загрузки DLL.");
+                // ----
+                if (MainAssembly != null)
+                {
+                    return true;
+                }
+                
+                Debug.WriteLine("Dll wasn't found or some error occured while reading");
+                BackgroundColorAssemblyButton = Color.FromArgb("#ff1717");
+                PlaceholderText = "Error occured while reading dll!";
+                PlaceHolderTextColor = Color.FromArgb("#ff1717");
+                MainAssembly = null;
+
+                return false;
             }
         }
-        else
+        catch (Exception e)
         {
-            Debug.WriteLine("Dll wasn't found or some error occured while reading");
+            if (MainAssembly != null)
+            {
+                return true;
+            }
+            
+            Debug.WriteLine(e);
+            BackgroundColorAssemblyButton = Color.FromArgb("#ff1717");
+            PlaceholderText = "Wrong assembly was chosen!";
+            PlaceHolderTextColor = Color.FromArgb("#ff1717");
+            MainAssembly = null;
+
+            return false;
         }
 
         return false;
@@ -193,6 +231,8 @@ public partial class MainPageViewModel : ObservableObject
 
         var contractTypes = contractAssembly.GetTypes();
 
+        // чет где-то налажал, херово работает
+        // а нет, все норм
         bool contractIsImplemented = contractTypes.All((p) =>
         {
             return types.Any( (s) =>
@@ -201,10 +241,10 @@ public partial class MainPageViewModel : ObservableObject
                 {
                     var boundedP = p.MakeGenericType(typeof(int));
                     var boundedS = s.MakeGenericType(typeof(int));
-
+        
                     return boundedP.IsAssignableFrom(boundedS);
                 }
-
+        
                 return p.IsAssignableFrom(s);
             });
         });
