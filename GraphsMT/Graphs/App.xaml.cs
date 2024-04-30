@@ -20,6 +20,8 @@ public partial class App : Application
         base.OnStart();
         
         Debug.WriteLine("OnLoad method worked!!!!");
+        
+        Debug.WriteLine("!!!" + Environment.CurrentDirectory);
     }
 
     // protected override Window CreateWindow(IActivationState? activationState)

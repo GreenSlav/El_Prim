@@ -1,4 +1,5 @@
-﻿using System.Timers;
+﻿using System.Diagnostics;
+using System.Timers;
 using System.Windows.Forms;
 using Graphs.ViewModels;
 
@@ -24,11 +25,9 @@ public partial class MainPage : ContentPage
         Title = "El Prim";
 
 
-        var s = EntryBorder;
-        var a = s.X;
-        var b = s.Y;
-        
+        Debug.WriteLine(Environment.CurrentDirectory);
 
+        
         // var timer = new System.Timers.Timer(1000);
         // timer.AutoReset = true;
         // timer.Elapsed += async (sender, e) => await RedrawClock(sender, e);

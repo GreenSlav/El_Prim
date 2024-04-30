@@ -8,12 +8,19 @@ namespace Graphs.ViewModels;
 
 public partial class MainPageViewModel : ObservableObject
 {
-    public Assembly Assembly;
+    // текущий путь до сборки с реализацией
+    public Assembly MainAssembly;
 
-    public const string PathToContract = "";
+    public const string PathToContract = "D:\\maui_last_stable\\El_Prim\\GraphsMT\\MauiContract\\bin\\Debug\\net8.0\\MauiContract.dll";
     // сюда из изначальной матрицы будут записываться пути в формате "13": путь из 1 в 3 и наоборот
     // чтоб при отрисовке пути понимать, был ли он уже отрисован(содержится в нашем сете) или нет
     private HashSet<string> _existedGraphPaths = new();
+
+    public MainPageViewModel()
+    {
+        PlaceholderText = "Enter integers for your matrix";
+        PlaceHolderTextColor = Color.FromArgb("#b8b8b8");
+    }
 
     // сет использованных для графов цветов
     public HashSet<string> UsedColorsForGraph = new();
@@ -57,6 +64,11 @@ public partial class MainPageViewModel : ObservableObject
     bool isEnabledEntry;
     [ObservableProperty]
     string enteredBorderEntryText;
+    [ObservableProperty] 
+    string placeholderText;
+    [ObservableProperty] 
+    Color placeHolderTextColor;
+
     
     // AssemblyButton
     [ObservableProperty]
@@ -81,7 +93,7 @@ public partial class MainPageViewModel : ObservableObject
         while (EntryTranslationY > -target)
         {
             await Task.Delay(10);
-            --EntryTranslationY;
+            EntryTranslationY -= 5;
         }
 
         EnteredBorderEntryText = "";
@@ -102,7 +114,7 @@ public partial class MainPageViewModel : ObservableObject
         while (EntryTranslationY != target)
         {
             await Task.Delay(10);
-            ++EntryTranslationY;
+            EntryTranslationY += 5;
         }
         
         IsEnabledEntry = true;
@@ -128,13 +140,32 @@ public partial class MainPageViewModel : ObservableObject
             // }
             assembly = Assembly.LoadFrom(pickedFile.FullPath);
             
-            // тут нужно проверить корректность сборки
-            bool loadedDllIsValid = await IsValidDll(assembly);
-
             if (assembly != null)
             {
                 // DLL успешно загружена, можно выполнять дальнейшие действия
                 Debug.WriteLine("DLL успешно загружена.");
+                
+                // тут нужно проверить корректность сборки
+                bool loadedDllIsValid = await IsValidDll(assembly);
+
+                if (loadedDllIsValid)
+                {
+                    BackgroundColorAssemblyButton = Color.FromArgb("#2ef24f");
+                    PlaceholderText = "Enter integers for your matrix";
+                    PlaceHolderTextColor = Color.FromArgb("#b8b8b8");
+                    MainAssembly = assembly;
+                }
+                else
+                {
+                    BackgroundColorAssemblyButton = Color.FromArgb("#ff1717");
+                    // На время сохраняем текст
+                    string backupText = PlaceholderText;
+                    Color backupColor = PlaceHolderTextColor;
+
+                    PlaceholderText = "Wrong assembly was chosen!";
+                    PlaceHolderTextColor = Color.FromArgb("#ff1717");
+                    MainAssembly = null;
+                }
             }
             else
             {
@@ -158,13 +189,24 @@ public partial class MainPageViewModel : ObservableObject
         // по сути это правильно, ведь dll будет в папке bin вместе с exe приложения
         // но папки винды там нет
         // походу в папку C:\WINDOWS\system32\MauiContract.dll
-        Assembly contractAssembly = Assembly.LoadFrom("MauiContract.dll");
+        Assembly contractAssembly = Assembly.LoadFrom(PathToContract);
 
         var contractTypes = contractAssembly.GetTypes();
 
         bool contractIsImplemented = contractTypes.All((p) =>
         {
-            return types.Any((Type s) => p.IsAssignableFrom(s));
+            return types.Any( (s) =>
+            {
+                if (p.IsGenericType && s.IsGenericType)
+                {
+                    var boundedP = p.MakeGenericType(typeof(int));
+                    var boundedS = s.MakeGenericType(typeof(int));
+
+                    return boundedP.IsAssignableFrom(boundedS);
+                }
+
+                return p.IsAssignableFrom(s);
+            });
         });
 
         return contractIsImplemented;

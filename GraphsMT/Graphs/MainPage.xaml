@@ -65,10 +65,10 @@
                 <Entry Text="{Binding EnteredBorderEntryText}" x:Name="BEntry"
                        MinimumWidthRequest="200"
                        IsEnabled="{Binding IsEnabledEntry}"
-                       HorizontalOptions="Fill" X="0" Y="0" PlaceholderColor="#b8b8b8" TextColor="White"
+                       HorizontalOptions="Fill" X="0" Y="0" PlaceholderColor="{Binding PlaceHolderTextColor}" TextColor="White"
                        FontSize="25" Margin="10, 10, 10, 10"
                        ReturnCommand="{Binding RemoveEntryCommand}"
-                       Placeholder="Enter integers for your matrix" >
+                       Placeholder="{Binding PlaceholderText}" >
                 
                 </Entry>
                 
