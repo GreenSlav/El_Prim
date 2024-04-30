@@ -3,6 +3,7 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Forms;
+using MauiContract;
 
 namespace Graphs.ViewModels;
 
@@ -11,11 +12,17 @@ public partial class MainPageViewModel : ObservableObject
     // текущий путь до сборки с реализацией
     // D:\maui_last_stable\El_Prim\GraphsMT\MauiContractImplementation\bin\Debug\net8.0
     public static Assembly MainAssembly = null;
+    public static IGraphSolver SolverPrl = null;
 
     public const string PathToContract = "D:\\maui_last_stable\\El_Prim\\GraphsMT\\MauiContract\\bin\\Debug\\net8.0\\MauiContract.dll";
     // сюда из изначальной матрицы будут записываться пути в формате "13": путь из 1 в 3 и наоборот
     // чтоб при отрисовке пути понимать, был ли он уже отрисован(содержится в нашем сете) или нет
     private HashSet<string> _existedGraphPaths = new();
+
+    // Позволяет избежать следующего случая:
+    // приложение запустилось, открыл контексное меню проводника
+    // закрыл, ничего не выбрав, и все окрасилось в красный
+    private bool InitialLaunch = true;
 
     public MainPageViewModel()
     {
@@ -81,10 +88,13 @@ public partial class MainPageViewModel : ObservableObject
     
 
 
+    // Этот же метод впоследствии запустит асинхронно метод решения задачи на алгоритм Прима
     [RelayCommand]
     public async Task RemoveEntryAsync()
     {
         // initialXBorderEntryPos = EntryTranslationY;  коммент птмчт всегда 0 по сути
+        
+        string inputMatrix = EnteredBorderEntryText;
 
         var target =  Screen.PrimaryScreen.Bounds.Height/4;
         
@@ -101,6 +111,8 @@ public partial class MainPageViewModel : ObservableObject
         
         
         IsEnabledBorderButton = true;
+
+        //SolverPrl.SolvePrl(new int[3, 4]);
     }
     
     
@@ -156,6 +168,24 @@ public partial class MainPageViewModel : ObservableObject
                         PlaceholderText = "Enter integers for your matrix";
                         PlaceHolderTextColor = Color.FromArgb("#b8b8b8");
                         MainAssembly = assembly;
+
+                        // Сюда запихну экземпляр класса IGraphSolver
+                        object graphSolver = null;
+                        //MethodInfo methodToInvoke = null;
+
+                        foreach (var type in assembly.GetTypes())
+                        {
+                            if (type != null && typeof(IGraphSolver).IsAssignableFrom(type))
+                            {
+                                graphSolver = Activator.CreateInstance(type);
+                                // вот тут непонятно, надо ли метод доставать, учитывая, что он зависит от содержимого класса IGraphSolver
+                                //methodToInvoke = type.GetMethod("SolvePrl");
+                                break;
+                            }
+                        }
+                        
+                        SolverPrl = graphSolver as IGraphSolver;
+                        InitialLaunch = false;
                         
                         return true;
                     }
@@ -186,7 +216,7 @@ public partial class MainPageViewModel : ObservableObject
             else
             {
                 // ----
-                if (MainAssembly != null)
+                if (MainAssembly != null || InitialLaunch)
                 {
                     return true;
                 }
@@ -195,6 +225,7 @@ public partial class MainPageViewModel : ObservableObject
                 BackgroundColorAssemblyButton = Color.FromArgb("#ff1717");
                 PlaceholderText = "Error occured while reading dll!";
                 PlaceHolderTextColor = Color.FromArgb("#ff1717");
+                InitialLaunch = false;
                 MainAssembly = null;
 
                 return false;
@@ -211,12 +242,12 @@ public partial class MainPageViewModel : ObservableObject
             BackgroundColorAssemblyButton = Color.FromArgb("#ff1717");
             PlaceholderText = "Wrong assembly was chosen!";
             PlaceHolderTextColor = Color.FromArgb("#ff1717");
+            InitialLaunch = false;
             MainAssembly = null;
 
             return false;
         }
-
-        return false;
+        
     }
 
 
@@ -253,42 +284,7 @@ public partial class MainPageViewModel : ObservableObject
     }
     
     
-    private async void Button_Clicked()
-    {
-        // Вызываем метод для выбора файла DLL
-        var pickedFile = await PickFile();
-
-        if (pickedFile != null)
-        {
-            try
-            {
-                // Загружаем DLL-файл в память через поток
-                Assembly assembly = null;
-                using (var stream = await pickedFile.OpenReadAsync())
-                {
-                    var assemblyData = new byte[stream.Length];
-                    await stream.ReadAsync(assemblyData, 0, assemblyData.Length);
-                    assembly = Assembly.Load(assemblyData);
-                }
-
-                if (assembly != null)
-                {
-                    // DLL успешно загружена, можно выполнять дальнейшие действия
-                    Debug.WriteLine("DLL успешно загружена.");
-                }
-                else
-                {
-                    // DLL не загружена из-за ошибки
-                    Debug.WriteLine("Ошибка загрузки DLL.");
-                }
-            }
-            catch (Exception ex)
-            {
-                // Обработка исключений при загрузке DLL
-                Debug.WriteLine($"Ошибка при загрузке DLL: {ex.Message}");
-            }
-        }
-    }
+    
 
         // Метод для выбора DLL-файла
     private async Task<FileResult?> PickFile()
