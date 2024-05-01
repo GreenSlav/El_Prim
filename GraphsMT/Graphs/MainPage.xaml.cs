@@ -8,6 +8,10 @@ namespace Graphs;
 public partial class MainPage : ContentPage
 {
     public static GraphicsView GraphView; 
+    public static System.Timers.Timer TimerToRedraw = new System.Timers.Timer(1000)
+    {
+        AutoReset = true
+    };
     
     public MainPage(MainPageViewModel mainPageViewModel)
     {
@@ -43,8 +47,10 @@ public partial class MainPage : ContentPage
         graphicsView.Invalidate(); 
     }
 
-    public async Task DrawSmth()
+    public static async Task ReDrawGraph()
     {
-        
+        var graphicsView = GraphView;
+
+        graphicsView.Invalidate(); 
     }
 }

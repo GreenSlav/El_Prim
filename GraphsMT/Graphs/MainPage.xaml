@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:drawable="clr-namespace:Graphs"
              xmlns:viewmodel="clr-namespace:Graphs.ViewModels"
+             xmlns:drawables="clr-namespace:Graphs.Drawables"
              x:Class="Graphs.MainPage"
              x:DataType="viewmodel:MainPageViewModel"
              Title="{Binding Title}"
@@ -10,7 +11,7 @@
     
     
     <ContentPage.Resources>
-        <drawable:GraphicsDrawable x:Key="GraphicsDrawable" />
+        <drawables:GraphicsDrawable x:Key="GraphicsDrawable" />
     </ContentPage.Resources>
     <!-- !!! из-за того что у меня абсолютный лэйаут в конце entry не видно, что пишется !!! -->
     <VerticalStackLayout BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill">

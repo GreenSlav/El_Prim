@@ -3,6 +3,7 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Forms;
+using Graphs.Drawables;
 using MauiContract;
 
 namespace Graphs.ViewModels;
@@ -13,6 +14,7 @@ public partial class MainPageViewModel : ObservableObject
     // D:\maui_last_stable\El_Prim\GraphsMT\MauiContractImplementation\bin\Debug\net8.0
     public static Assembly MainAssembly = null;
     public static IGraphSolver SolverPrl = null;
+    public static int[,] SolvedMatrix = null;
 
     public const string PathToContract = "D:\\maui_last_stable\\El_Prim\\GraphsMT\\MauiContract\\bin\\Debug\\net8.0\\MauiContract.dll";
     // сюда из изначальной матрицы будут записываться пути в формате "13": путь из 1 в 3 и наоборот
@@ -90,11 +92,43 @@ public partial class MainPageViewModel : ObservableObject
 
     // Этот же метод впоследствии запустит асинхронно метод решения задачи на алгоритм Прима
     [RelayCommand]
-    public async Task RemoveEntryAsync()
+    public async Task RemoveEntryAsync() // aka EnterCommand
     {
         // initialXBorderEntryPos = EntryTranslationY;  коммент птмчт всегда 0 по сути
+        if (SolverPrl == null)
+        {
+            Debug.WriteLine("Класс SolverPrl равен null");
+            EnteredBorderEntryText = "";
+            PlaceholderText = "Dll was not chosen!";
+            PlaceHolderTextColor = Color.FromArgb("#ff1717");
+            
+            return;
+        }
+        
+        PlaceholderText = "Enter integers for your matrix";
+        PlaceHolderTextColor = Color.FromArgb("#b8b8b8");
+        
         
         string inputMatrix = EnteredBorderEntryText;
+
+        // Надо бы почекать, как себя поведут две строчки снизу
+        var matrixToInput = await ConvertInputToMatrixAsync(EnteredBorderEntryText);
+        //var matrixToInput = ConvertInputToMatrix(EnteredBorderEntryText);
+
+        bool isValidInput = SolverPrl.ValidateMatrix(matrixToInput);
+
+        if (!isValidInput)
+        {
+            Debug.WriteLine("Не валидная матрица на вход");
+            EnteredBorderEntryText = "";
+            PlaceholderText = "Invalid matrix was given!";
+            PlaceHolderTextColor = Color.FromArgb("#ff1717");
+            
+            return;
+        }
+        
+        // вот здесь в целом можно запускать асинхронно метод решения матрицы
+        
 
         var target =  Screen.PrimaryScreen.Bounds.Height/4;
         
@@ -112,7 +146,100 @@ public partial class MainPageViewModel : ObservableObject
         
         IsEnabledBorderButton = true;
 
-        //SolverPrl.SolvePrl(new int[3, 4]);
+        // Вызываем метод отрисовки графа на странице MainPage
+        await SolveAndDrawMatrix(matrixToInput);
+        GraphicsDrawable.CoordsToDraw = GenerateCoordinates(matrixToInput.GetLength(0));
+        
+        // тут, после того, как мы решили матрицу и сгенерировали кординаты, нужно обновить граф
+        // с помощью validate()
+        // ...
+        await MainPage.ReDrawGraph();
+    }
+    
+    
+    public Dictionary<int, ValueTuple<int, int>> GenerateCoordinates(int numberOfVertexes)
+    {
+        // пускай радиус вершины на данном этапе будет равен 75
+        var result = new Dictionary<int, ValueTuple<int, int>>();
+
+        for (int i = 0; i < numberOfVertexes; i++)
+        {
+            GenerateNewCoords:
+            int x = new Random().Next(100, System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width-100);
+            int y = new Random().Next(0, System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height-200);
+
+            foreach (var vertex in result)
+            {
+                if (Math.Pow(Math.Pow(x - vertex.Value.Item1, 2) + Math.Pow(y - vertex.Value.Item2, 2) , 0.5) < 150)
+                    goto GenerateNewCoords;
+            }
+            
+            result[i] = (x, y);
+        }
+
+        return result;
+    }
+
+
+    async Task SolveAndDrawMatrix(int[,] matrix)
+    {
+        var result = await Task.Run(() => SolverPrl.SolvePrl(matrix));
+
+         SolvedMatrix = result;
+
+
+         int foo = 0;
+    }
+
+
+    async Task<int[,]> ConvertInputToMatrixAsync(string input)
+    {
+        string[] parts = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        int[] numbers = Array.ConvertAll(parts, int.Parse);
+
+        if (Math.Abs(Math.Pow(numbers.Length, 0.5) - (int)Math.Pow(numbers.Length, 0.5)) > double.Epsilon || numbers.Length == 0)
+        {
+            return new int[0, 1]; // возвращаю заведомо неправильную матрицу
+        }
+
+        int square = (int)Math.Pow(numbers.Length, 0.5);
+        int[,] result = new int[square, square];
+        int currentindex = 0;
+        for (int i = 0; i < square; i++)
+        {
+            for (int j = 0; j < square; j++)
+            {
+                result[i, j] = numbers[currentindex];
+                ++currentindex;
+            }
+        }
+
+        return result;
+    }
+    
+    int[,] ConvertInputToMatrix(string input)
+    {
+        string[] parts = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        int[] numbers = Array.ConvertAll(parts, int.Parse);
+
+        if (Math.Abs(Math.Pow(numbers.Length, 0.5) - (int)Math.Pow(numbers.Length, 0.5)) > double.Epsilon || numbers.Length == 0)
+        {
+            return new int[0, 1]; // возвращаю заведомо неправильную матрицу
+        }
+
+        int square = (int)Math.Pow(numbers.Length, 0.5);
+        int[,] result = new int[square, square];
+        int currentindex = 0;
+        for (int i = 0; i < square; i++)
+        {
+            for (int j = 0; j < square; j++)
+            {
+                result[i, j] = numbers[currentindex];
+                ++currentindex;
+            }
+        }
+
+        return result;
     }
     
     
