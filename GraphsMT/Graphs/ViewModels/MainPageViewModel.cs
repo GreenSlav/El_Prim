@@ -12,66 +12,61 @@ public partial class MainPageViewModel : ObservableObject
 {
     // текущий путь до сборки с реализацией
     // D:\maui_last_stable\El_Prim\GraphsMT\MauiContractImplementation\bin\Debug\net8.0
+    // текущая сборка, что активна
     public static Assembly MainAssembly = null;
+    // Решатель, полученный из сборки
     public static IGraphSolver SolverPrl = null;
+    // Решенная матрица смежности, по которой и будет ориентироваться рисовальщик
     public static int[,] SolvedMatrix = null;
 
+    // Путь к контракту
     public const string PathToContract = "D:\\maui_last_stable\\El_Prim\\GraphsMT\\MauiContract\\bin\\Debug\\net8.0\\MauiContract.dll";
-    // сюда из изначальной матрицы будут записываться пути в формате "13": путь из 1 в 3 и наоборот
-    // чтоб при отрисовке пути понимать, был ли он уже отрисован(содержится в нашем сете) или нет
-    private HashSet<string> _existedGraphPaths = new();
 
     // Позволяет избежать следующего случая:
     // приложение запустилось, открыл контексное меню проводника
     // закрыл, ничего не выбрав, и все окрасилось в красный
+    // поэтому нужно понять, пыталились ли до этого сборку подгрузить
     private bool InitialLaunch = true;
 
     public MainPageViewModel()
     {
+        // Задаем текст для Entry и цвет для placeholder
         PlaceholderText = "Enter integers for your matrix";
         PlaceHolderTextColor = Color.FromArgb("#b8b8b8");
     }
-
-    // сет использованных для графов цветов
-    public HashSet<string> UsedColorsForGraph = new();
-
-    private static string PathToDll = "";
-
-
-    private int[,] matrixForExample = {
-        {0, 3, 1, 2, 2},
-        {3, 0, 8, 3, 1},
-        {1, 8, 0, 1, 4},
-        {1, 1, 1, 0, 6},
-        {2, 1, 4, 6, 0}
-    };
-
-    async Task DrawMatrixGraph()
-    {
-        
-    }
     
+    
+    // Это свойство по итогу так не пригодилось
+    // изначально думал, что сделаю колесо загрузки
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     bool isBusy;
 
+    // В данном случае binding тайтла происходит через MainPage, поэтому это свойство тоже не пригодилось
     [ObservableProperty]
     string title;
 
+    // Это тоже не пригодилось
     public bool IsNotBusy => !IsBusy;
 
+    
     // BorderButton
+    // Конпка для возврата entry для введения матрицы смежности
     [ObservableProperty]
     bool isVisibleBorderButton;
     [ObservableProperty]
     bool isEnabledBorderButton;
     
+    
     // BorderEntry
+    // Сам entry для введения матрицы
+    // Смещение по Y для entry и кнопки указания сборки
     [ObservableProperty] 
     [NotifyPropertyChangedFor(nameof(AbsLayoutAssebmlyButton))]
     int entryTranslationY;
     [ObservableProperty]
     bool isEnabledEntry;
+    // Введеный в entry текст
     [ObservableProperty]
     string enteredBorderEntryText;
     [ObservableProperty] 
@@ -81,11 +76,14 @@ public partial class MainPageViewModel : ObservableObject
 
     
     // AssemblyButton
+    [Obsolete]
     [ObservableProperty]
     bool dllLoadedSuccesfully; // от этого будет зависеть можно ли будет нажать enter в entry
-    
+    // чет так и не пригодилось
+    // Красный или зеленый цвет кнопки указания сборки в зависимости от успеха указания
     [ObservableProperty]
     Color backgroundColorAssemblyButton;
+    // Абсолютные кординаты для кнопки сборки под entry
     public Rect AbsLayoutAssebmlyButton => new Rect(20, EntryTranslationY + 65, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize);
     
 
@@ -94,7 +92,6 @@ public partial class MainPageViewModel : ObservableObject
     [RelayCommand]
     public async Task RemoveEntryAsync() // aka EnterCommand
     {
-        // initialXBorderEntryPos = EntryTranslationY;  коммент птмчт всегда 0 по сути
         if (SolverPrl == null)
         {
             Debug.WriteLine("Класс SolverPrl равен null");
@@ -109,12 +106,7 @@ public partial class MainPageViewModel : ObservableObject
         PlaceHolderTextColor = Color.FromArgb("#b8b8b8");
         
         
-        string inputMatrix = EnteredBorderEntryText;
-
-        // Надо бы почекать, как себя поведут две строчки снизу
-        var matrixToInput = await ConvertInputToMatrixAsync(EnteredBorderEntryText);
-        //var matrixToInput = ConvertInputToMatrix(EnteredBorderEntryText);
-
+        var matrixToInput = await Task.Run(() => ConvertInputToMatrix(EnteredBorderEntryText));
         bool isValidInput = SolverPrl.ValidateMatrix(matrixToInput);
 
         if (!isValidInput)
@@ -127,9 +119,10 @@ public partial class MainPageViewModel : ObservableObject
             return;
         }
         
-        // вот здесь в целом можно запускать асинхронно метод решения матрицы
-        
-
+        // Насколько должен съехать entry с assemblyButton, чтоб их не было видно
+        // Не очень надежный способ, но чет я поленился городить еще несколько статических переменных,
+        // которые будут узнавать итоговую высоту этих двух штук
+        // anyway, должно хватить
         var target =  Screen.PrimaryScreen.Bounds.Height/4;
         
         IsEnabledEntry = false;
@@ -141,19 +134,25 @@ public partial class MainPageViewModel : ObservableObject
             EntryTranslationY -= 5;
         }
 
+        // Матрица уже получена, можем очистить entry
         EnteredBorderEntryText = "";
-        
         
         IsEnabledBorderButton = true;
 
         // Вызываем метод отрисовки графа на странице MainPage
+        // Делаем метод решения асинхронным, чтоб UI оставался отзывчивым
+        // пока решение будет готовиться, UI продолжит работу
         await SolveAndDrawMatrix(matrixToInput);
-        GraphicsDrawable.CoordsToDraw = GenerateCoordinates(matrixToInput.GetLength(0));
+        GraphicsDrawable.CoordsToDraw = await Task.Run((() => GenerateCoordinates(matrixToInput.GetLength(0))));
         
         // тут, после того, как мы решили матрицу и сгенерировали кординаты, нужно обновить граф
         // с помощью validate()
         // ...
-        await MainPage.ReDrawGraph();
+        // вот эта строка обязательна
+        // кстати, вот из-за строки ниже, скорее всего и происходит зависание, тк она синхронная, и пока там 
+        // метод все рисует, UI поток блочится
+        // тк он void
+        MainPage.ReDrawGraph();
     }
     
     
@@ -184,40 +183,12 @@ public partial class MainPageViewModel : ObservableObject
     async Task SolveAndDrawMatrix(int[,] matrix)
     {
         var result = await Task.Run(() => SolverPrl.SolvePrl(matrix));
-
-         SolvedMatrix = result;
-
-
-         int foo = 0;
+        
+        SolvedMatrix = result;
     }
 
 
-    async Task<int[,]> ConvertInputToMatrixAsync(string input)
-    {
-        string[] parts = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        int[] numbers = Array.ConvertAll(parts, int.Parse);
-
-        if (Math.Abs(Math.Pow(numbers.Length, 0.5) - (int)Math.Pow(numbers.Length, 0.5)) > double.Epsilon || numbers.Length == 0)
-        {
-            return new int[0, 1]; // возвращаю заведомо неправильную матрицу
-        }
-
-        int square = (int)Math.Pow(numbers.Length, 0.5);
-        int[,] result = new int[square, square];
-        int currentindex = 0;
-        for (int i = 0; i < square; i++)
-        {
-            for (int j = 0; j < square; j++)
-            {
-                result[i, j] = numbers[currentindex];
-                ++currentindex;
-            }
-        }
-
-        return result;
-    }
-    
-    int[,] ConvertInputToMatrix(string input)
+    async Task<int[,]> ConvertInputToMatrix(string input)
     {
         string[] parts = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         int[] numbers = Array.ConvertAll(parts, int.Parse);
@@ -272,13 +243,7 @@ public partial class MainPageViewModel : ObservableObject
             if (pickedFile != null)
             {
                 Assembly assembly = null;
-                // запасной вариант
-                // using (var stream = await pickedFile.OpenReadAsync())
-                // {
-                //     var assemblyData = new byte[stream.Length];
-                //     await stream.ReadAsync(assemblyData, 0, assemblyData.Length);
-                //     assembly = Assembly.Load(assemblyData);
-                // }
+                
                 assembly = Assembly.LoadFrom(pickedFile.FullPath);
             
                 if (assembly != null)
@@ -305,8 +270,6 @@ public partial class MainPageViewModel : ObservableObject
                             if (type != null && typeof(IGraphSolver).IsAssignableFrom(type))
                             {
                                 graphSolver = Activator.CreateInstance(type);
-                                // вот тут непонятно, надо ли метод доставать, учитывая, что он зависит от содержимого класса IGraphSolver
-                                //methodToInvoke = type.GetMethod("SolvePrl");
                                 break;
                             }
                         }
@@ -319,8 +282,6 @@ public partial class MainPageViewModel : ObservableObject
                     else
                     {
                         BackgroundColorAssemblyButton = Color.FromArgb("#ff1717");
-                        // На время сохраняем текст
-
                         PlaceholderText = "Wrong assembly was chosen!";
                         PlaceHolderTextColor = Color.FromArgb("#ff1717");
                         MainAssembly = null;
@@ -342,7 +303,6 @@ public partial class MainPageViewModel : ObservableObject
             }
             else
             {
-                // ----
                 if (MainAssembly != null || InitialLaunch)
                 {
                     return true;
@@ -413,7 +373,7 @@ public partial class MainPageViewModel : ObservableObject
     
     
 
-        // Метод для выбора DLL-файла
+    // Метод для выбора DLL-файла
     private async Task<FileResult?> PickFile()
     {
         var dllFileType = new FilePickerFileType(
@@ -430,8 +390,7 @@ public partial class MainPageViewModel : ObservableObject
                 FileTypes = dllFileType, // Указываем тип файла DLL
                 PickerTitle = "Выберите DLL-файл" // Заголовок окна выбора файла
             });
-
-            PathToDll = pickedFile.FullPath;
+            
             
             return pickedFile;
         }

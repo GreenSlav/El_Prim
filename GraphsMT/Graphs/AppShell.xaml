@@ -7,7 +7,6 @@
     Shell.FlyoutBehavior="Disabled"
     >
     
-    
     <Shell.TitleView>
         <HorizontalStackLayout VerticalOptions="Fill" BackgroundColor="Black">
             <!-- Если содержимое будет выше TitleView, то он добавит дебильные 3 точки справа -->
@@ -20,29 +19,8 @@
                 VerticalOptions="Center"
                 FontFamily="Caveat"
                 />
-            <!-- FontSize="40" -->
-            <!-- HeightRequest="50" -->
-            <!-- VerticalTextAlignment="Center" -->
-            <!-- VerticalOptions="Center" -->
-            <!-- FontFamily="Caveat" -->
         </HorizontalStackLayout>
     </Shell.TitleView>
-    
-    
-
-    
-    <!-- Это навигация снизу -->
-    <!-- <TabBar> -->
-    <!--     <ShellContent Title="Cats" -->
-    <!--                   Icon="cat.png" -->
-    <!--                   ContentTemplate="{DataTemplate views:CatsPage}" /> -->
-    <!--     <ShellContent Title="Dogs" -->
-    <!--                   Icon="dog.png" -->
-    <!--                   ContentTemplate="{DataTemplate views:DogsPage}" /> -->
-    <!--     <ShellContent Title="Monkeys" -->
-    <!--                   Icon="monkey.png" -->
-    <!--                   ContentTemplate="{DataTemplate views:MonkeysPage}" /> -->
-    <!-- </TabBar> -->
 
     <ShellContent
         Title="Home"

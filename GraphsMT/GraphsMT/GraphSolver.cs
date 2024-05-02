@@ -11,16 +11,17 @@ public class GraphSolver : IGraphSolver
     {
         if (matrix is null || matrix.GetLength(0) != matrix.GetLength(1))
         {
-            throw new Exception("Incorrect matrix for income!");
+            return false;
         }
 
         for (int i = 0; i < matrix.GetLength(0); i++)
         {
             for (int j = 0; j < matrix.GetLength(1); j++)
             {
-                if (matrix[i, j] < 0)
+                if (matrix[i, j] < 0 || matrix[i, j] != matrix[j, i])
                 {
-                    throw new Exception("Negative value appears in the matrix!");
+                    int a = 0;
+                    return false;
                 }
             }
         }

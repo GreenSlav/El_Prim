@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 
 
 namespace GraphsMT;
@@ -68,6 +69,38 @@ class Program
             {30, 46, 52, 57, 63, 65, 67, 69, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 0}
         };
 
+        
+        int[,] adjacencyMatrixchatgpt = {
+            {0, 1, 1, 0, 0, 0, 0, 0, 0, 1},
+            {1, 0, 0, 1, 1, 0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+            {0, 1, 0, 0, 0, 1, 1, 0, 0, 0},
+            {0, 1, 1, 0, 0, 0, 1, 1, 0, 0},
+            {0, 0, 1, 1, 0, 0, 0, 0, 1, 0},
+            {0, 0, 0, 1, 1, 0, 0, 0, 0, 1},
+            {0, 0, 0, 0, 1, 0, 0, 0, 1, 1},
+            {0, 0, 0, 0, 0, 1, 0, 1, 0, 1},
+            {1, 0, 0, 0, 0, 0, 1, 1, 1, 0}
+        };
+
+        int[,] input = adjacencyMatrixchatgpt;
+
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < input.GetLength(0); i++)
+        {
+            for (int j = 0; j < input.GetLength(1); j++)
+            {
+                result.Append(input[i, j] + " ");
+            }
+        }
+
+        Console.WriteLine(result);
+        
+
+        var s = new GraphSolver();
+        bool a = s.ValidateMatrix(adjacencyMatrixchatgpt);
+
+        
         /*
          * Ошибки:
          * к моменту вызова Min() получаю пустой список

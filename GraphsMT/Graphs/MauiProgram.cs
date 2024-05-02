@@ -25,7 +25,7 @@ public static class MauiProgram
             });
         
         
-            builder.ConfigureLifecycleEvents(events =>
+        builder.ConfigureLifecycleEvents(events =>
         {
 #if WINDOWS
             events.AddWindows(w =>
@@ -41,6 +41,7 @@ public static class MauiProgram
             });
 #endif
         });
+            
 
 #if DEBUG
         builder.Logging.AddDebug();
